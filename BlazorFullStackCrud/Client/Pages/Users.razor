@@ -1,0 +1,58 @@
+﻿@page "/users"
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+@attribute [Authorize(Roles = "Admin")]
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <PageTitle>Users</PageTitle>
+
+        <h3>Users</h3>
+
+        <span>Logged in as @context.User.Identity.Name</span>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in UserService.Users)
+                {
+                    <tr>
+                        <td>@user.Username</td>
+                        <td>@user.Role.Name</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="(() => ShowUser(user.Id))"><i class="oi oi-pencil"></i></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button class="btn btn-primary" @onclick="CreateNewUser">Create New User</button>
+    </Authorized>
+    <NotAuthorized>
+        <span>Unauthorized user</span>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await UserService.GetUsers();
+    }
+
+    void ShowUser(int id)
+    {
+        NavigationManager.NavigateTo($"userpage/{id}");
+    }
+
+    void CreateNewUser()
+    {
+        NavigationManager.NavigateTo("/userpage");
+    }
+}

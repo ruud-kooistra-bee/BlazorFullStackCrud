@@ -9,33 +9,30 @@
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Comic>().HasData(
-                new Comic { Id = 1, Name = "Marvel" },
-                new Comic { Id = 2, Name = "DC" }
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = 1, Name = "Admin" },
+                new Role { Id = 2, Name = "User" }
+
             );
 
-            modelBuilder.Entity<SuperHero>().HasData(
-                new SuperHero
+            modelBuilder.Entity<User>().HasData(
+                new User
                 {
                     Id = 1,
-                    FirstName = "Peter",
-                    LastName = "Parker",
-                    HeroName = "Spiderman",
-                    ComicId = 1
-                },
-                new SuperHero
+                    Username = "admin",
+                    RoleId = 1
+                }, 
+                new User
                 {
                     Id = 2,
-                    FirstName = "Bruce",
-                    LastName = "Wayne",
-                    HeroName = "Batman",
-                    ComicId = 2
+                    Username = "user",
+                    RoleId = 2
                 }
             );
         }
 
-        public DbSet<SuperHero> SuperHeroes { get; set; }
+        public DbSet<User> Users { get; set; }
 
-        public DbSet<Comic> Comics { get; set; }
+        public DbSet<Role> Roles { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace BlazorFullStackCrud.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("BlazorFullStackCrud.Shared.Comic", b =>
+            modelBuilder.Entity("BlazorFullStackCrud.Shared.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,22 +35,17 @@ namespace BlazorFullStackCrud.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comics");
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Name = "Marvel"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "DC"
+                            Name = "Admin"
                         });
                 });
 
-            modelBuilder.Entity("BlazorFullStackCrud.Shared.SuperHero", b =>
+            modelBuilder.Entity("BlazorFullStackCrud.Shared.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -58,55 +53,42 @@ namespace BlazorFullStackCrud.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ComicId")
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HeroName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ComicId");
+                    b.HasIndex("RoleId");
 
-                    b.ToTable("SuperHeroes");
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            ComicId = 1,
-                            FirstName = "Peter",
-                            HeroName = "Spiderman",
-                            LastName = "Parker"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ComicId = 2,
-                            FirstName = "Bruce",
-                            HeroName = "Batman",
-                            LastName = "Wayne"
+                            Password = "admin",
+                            RoleId = 1,
+                            Username = "admin"
                         });
                 });
 
-            modelBuilder.Entity("BlazorFullStackCrud.Shared.SuperHero", b =>
+            modelBuilder.Entity("BlazorFullStackCrud.Shared.User", b =>
                 {
-                    b.HasOne("BlazorFullStackCrud.Shared.Comic", "Comic")
+                    b.HasOne("BlazorFullStackCrud.Shared.Role", "Role")
                         .WithMany()
-                        .HasForeignKey("ComicId")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Comic");
+                    b.Navigation("Role");
                 });
 #pragma warning restore 612, 618
         }

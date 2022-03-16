@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlazorFullStackCrud.Shared
 {
-    public class Comic
+    public class Role
     {
         public int Id { get; set; }
 
