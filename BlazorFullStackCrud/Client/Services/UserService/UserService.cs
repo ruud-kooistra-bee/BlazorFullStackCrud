@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
 
 namespace BlazorFullStackCrud.Client.Services.UserService
 {
@@ -7,6 +8,9 @@ namespace BlazorFullStackCrud.Client.Services.UserService
     {
         private readonly HttpClient _http;
         private readonly NavigationManager _navigationManager;
+
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
 
         public UserService(HttpClient http, NavigationManager navigationManager)
         {
@@ -62,6 +66,17 @@ namespace BlazorFullStackCrud.Client.Services.UserService
         {
             var result = await _http.PutAsJsonAsync($"api/user/{user.Id}", user);
             await SetUsers(result);
+        }
+
+        public async Task CreatepasswordHash(string password)
+        {
+            var result = await _http.GetFromJsonAsync<Array>("api/auth/password");
+            await CreatepasswordHash(password);
+            if (result != null)
+            {
+                PasswordHash = result[0];
+                PasswordSalt = result[1];
+            } 
         }
     }
 }

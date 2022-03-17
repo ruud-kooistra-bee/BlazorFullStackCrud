@@ -17,5 +17,7 @@
         Task UpdateUser(User user);
 
         Task DeleteUser(int id);
+
+        Task CreatePasswordHash(string password);
     }
 }

@@ -16,7 +16,7 @@ namespace BlazorFullStackCrud.Server.Data
                 new Role { Id = 2, Name = "User" }
 
             );
-
+            
             CreatePasswordHash("admin", out byte[] passwordHash, out byte[] passwordSalt);
             modelBuilder.Entity<User>().HasData(
                 new User
@@ -24,7 +24,7 @@ namespace BlazorFullStackCrud.Server.Data
                     Id = 1,
                     Email = "user#domain.com",
                     Username = "admin",
-                    PasswordHash = passwordHash,
+                    PasswordHash = passwordHash, // PasswordHash = Enumerable.Repeat((byte)0x20,100).ToArray();
                     PasswordSalt = passwordSalt,
                     RoleId = 1,
                     DateOfBirth = DateTime.Now
