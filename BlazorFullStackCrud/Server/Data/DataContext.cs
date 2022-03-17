@@ -1,4 +1,6 @@
-﻿namespace BlazorFullStackCrud.Server.Data
+﻿using System.Security.Cryptography;
+
+namespace BlazorFullStackCrud.Server.Data
 {
     public class DataContext : DbContext
     {
@@ -15,20 +17,38 @@
 
             );
 
+            CreatePasswordHash("admin", out byte[] passwordHash, out byte[] passwordSalt);
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     Id = 1,
+                    Email = "user#domain.com",
                     Username = "admin",
-                    RoleId = 1
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+                    RoleId = 1,
+                    DateOfBirth = DateTime.Now
                 }, 
                 new User
                 {
                     Id = 2,
+                    Email = "user#domain.com",
                     Username = "user",
-                    RoleId = 2
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+                    RoleId = 2,
+                    DateOfBirth = DateTime.Now
                 }
             );
+        }
+
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac = new HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
         }
 
         public DbSet<User> Users { get; set; }

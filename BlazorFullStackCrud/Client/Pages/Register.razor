@@ -49,7 +49,12 @@
 </EditForm>
 
 @code {
-    UserRegister user = new UserRegister();
+    protected override async Task OnInitializedAsync()
+    {
+        await UserService.GetRoles();
+    }
+    
+    UserRegister user = new UserRegister { Role = new Role() };
 
     void HandleRegistration()
     {

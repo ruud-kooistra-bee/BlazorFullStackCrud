@@ -61,10 +61,16 @@ namespace BlazorFullStackCrud.Server.Controllers
             if (dbUser == null)
                 return NotFound("This user does not exist!");
 
+            dbUser.Email = user.Email;
+
             dbUser.Username = user.Username;
-            //dbUser.PasswordHash = user.PasswordHash;
-            //dbUser.PasswordSalt = user.PasswordSalt;
+
+            dbUser.PasswordHash = user.PasswordHash;
+            dbUser.PasswordSalt = user.PasswordSalt;
+
             dbUser.RoleId = user.RoleId;
+
+            dbUser.DateOfBirth = user.DateOfBirth;
 
             await _context.SaveChangesAsync();
 

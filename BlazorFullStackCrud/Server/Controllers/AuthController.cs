@@ -27,10 +27,15 @@ namespace BlazorFullStackCrud.Server.Controllers
         {
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
+            user.Email = request.Email;
             user.Username = request.Username;
  
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+
+            user.RoleId = request.RoleId;
+
+            user.DateOfBirth = request.DateOfBirth;
 
             return Ok(user);
         }

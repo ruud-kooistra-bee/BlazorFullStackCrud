@@ -21,6 +21,12 @@ namespace BlazorFullStackCrud.Shared
         [Compare("Password", ErrorMessage = "The passwords do not match")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
+        public byte[] PasswordHash { get; set; }
+
+        public byte[] PasswordSalt { get; set; }
+
+        public Role? Role { get; set; }
+
         [Required]
         public int RoleId { get; set; } = 1;
 
