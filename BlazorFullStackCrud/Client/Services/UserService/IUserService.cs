@@ -2,6 +2,8 @@
 {
     public interface IUserService
     {
+        ByteArrayPair ByteArrayPair { get; set; }
+
         List<User> Users { get; set; }
 
         List<Role> Roles { get; set; }

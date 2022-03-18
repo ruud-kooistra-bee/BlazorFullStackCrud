@@ -70,8 +70,9 @@
 
         await UserService.CreatePasswordHash(user.Password);
 
-        user_registered.PasswordHash = UserService.PasswordHash;
-        user_registered.PasswordSalt = UserService.PasswordSalt;
+        user_registered.PasswordHash = UserService.ByteArrayPair.PasswordHash;
+        user_registered.PasswordSalt = UserService.ByteArrayPair.PasswordSalt;
+
         user_registered.RoleId = user.RoleId;
         user_registered.DateOfBirth = user.DateOfBirth;
 

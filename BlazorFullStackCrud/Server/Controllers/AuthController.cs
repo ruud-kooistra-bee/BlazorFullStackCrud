@@ -81,18 +81,22 @@ namespace BlazorFullStackCrud.Server.Controllers
             return jwt;
         }
 
-        [HttpGet("{password}")]
-        public Array CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            Array<byte> result[2];
-
             using (var hmac = new HMACSHA512())
             {
-                result[1] = passwordSalt = hmac.Key;
-                result[0] = passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
+        }
 
-            return result;
+        [HttpGet("/hash")]
+        public ByteArrayPair CreatePasswordHash(string password)
+        {
+            var hmac = new HMACSHA512();
+
+            ByteArrayPair ByteArrayPair = new ByteArrayPair(hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)), hmac.Key);
+            return ByteArrayPair;
         }
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)

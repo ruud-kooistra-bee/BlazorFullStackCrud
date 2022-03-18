@@ -9,15 +9,13 @@ namespace BlazorFullStackCrud.Client.Services.UserService
         private readonly HttpClient _http;
         private readonly NavigationManager _navigationManager;
 
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
-
         public UserService(HttpClient http, NavigationManager navigationManager)
         {
             _http = http;
             _navigationManager = navigationManager;
         }
 
+        public ByteArrayPair ByteArrayPair { get; set; }
         public List<User> Users { get; set; } = new List<User>();
         public List<Role> Roles { get; set; } = new List<Role>();
 
@@ -68,15 +66,10 @@ namespace BlazorFullStackCrud.Client.Services.UserService
             await SetUsers(result);
         }
 
-        public async Task CreatepasswordHash(string password)
+        public async Task CreatePasswordHash(string password)
         {
-            var result = await _http.GetFromJsonAsync<Array>("api/auth/password");
-            await CreatepasswordHash(password);
-            if (result != null)
-            {
-                PasswordHash = result[0];
-                PasswordSalt = result[1];
-            } 
+            var result = await _http.GetFromJsonAsync<ByteArrayPair>("api/auth/hash");
+            ByteArrayPair = new ByteArrayPair(result.PasswordHash, result.PasswordSalt);
         }
     }
 }

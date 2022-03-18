@@ -21,16 +21,12 @@ namespace BlazorFullStackCrud.Shared
         [Compare("Password", ErrorMessage = "The passwords do not match")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
-        public byte[] PasswordHash { get; set; }
-
-        public byte[] PasswordSalt { get; set; }
-
         public Role? Role { get; set; }
 
         [Required]
         public int RoleId { get; set; } = 1;
 
-        [Required, DateOfBirth(MinAge = 0, MaxAge = 150, ErrorMessage = "Are you from the future?")]
+        [Required, DateOfBirth(MinAge = 0, MaxAge = 150, ErrorMessage = "Are you a time traveler?")]
         public DateTime DateOfBirth { get; set; } = DateTime.Now;
 
         [Range(typeof(bool), "true", "true", ErrorMessage = "Only confirmed users can play!")]
@@ -56,9 +52,9 @@ namespace BlazorFullStackCrud.Shared
             return (val.AddYears(MaxAge) > DateTime.Now);
         }
 
-        public override string FormatErrorMessage(string name)
+        public string? GetErrorMessage()
         {
-            return name;
+            return ErrorMessage;
         }
     }
 }
