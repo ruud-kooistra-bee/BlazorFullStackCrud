@@ -33,7 +33,7 @@
         <InputSelect id="userrole" @bind-Value="user.RoleId" class="form-select">
             @foreach (var role in UserService.Roles)
             {
-                <option value="@role.Id">@role.Name</option>
+                <option value="@role.Id">@role.Name @role.Id</option>
             }
         </InputSelect>
     </div>
@@ -56,27 +56,13 @@
         await UserService.GetRoles();
     }
 
-    UserRegister user = new UserRegister { Role = new Role() };
+    UserDto user = new UserDto();
 
     protected async Task HandleRegistration()
     {
         await JSRuntime.InvokeVoidAsync("console.log", "This is the great new user:", user);
 
-        User user_registered = new User { Role = new Role() };
-        user_registered.Email = user.Email;
-        user_registered.Username = user.Username;
-        user_registered.Password = user.Password;
-        user_registered.ConfirmPassword = user.ConfirmPassword;
-
-        await UserService.CreatePasswordHash(user.Password);
-
-        user_registered.PasswordHash = UserService.ByteArrayPair.PasswordHash;
-        user_registered.PasswordSalt = UserService.ByteArrayPair.PasswordSalt;
-
-        user_registered.RoleId = user.RoleId;
-        user_registered.DateOfBirth = user.DateOfBirth;
-
-        await UserService.CreateUser(user_registered);
+        await UserService.CreateUser(user);
 
         NavigationManager.NavigateTo("userpage");
     }

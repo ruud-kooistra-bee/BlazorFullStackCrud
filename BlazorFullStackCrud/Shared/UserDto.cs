@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace BlazorFullStackCrud.Shared
 {
-    public class UserRegister
+    public class UserDto
     {
+        public int Id { get; set; }
+
         [Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
 
@@ -21,10 +23,8 @@ namespace BlazorFullStackCrud.Shared
         [Compare("Password", ErrorMessage = "The passwords do not match")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
-        public Role? Role { get; set; }
-
         [Required]
-        public int RoleId { get; set; } = 1;
+        public int RoleId { get; set; } = 2;
 
         [Required, DateOfBirth(MinAge = 0, MaxAge = 150, ErrorMessage = "Are you a time traveler?")]
         public DateTime DateOfBirth { get; set; } = DateTime.Now;

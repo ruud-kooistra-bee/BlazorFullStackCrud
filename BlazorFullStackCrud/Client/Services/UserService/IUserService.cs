@@ -2,9 +2,7 @@
 {
     public interface IUserService
     {
-        ByteArrayPair ByteArrayPair { get; set; }
-
-        List<User> Users { get; set; }
+        List<UserDto> Users { get; set; }
 
         List<Role> Roles { get; set; }
 
@@ -12,14 +10,12 @@
 
         Task GetUsers();
 
-        Task<User> GetSingleUser(int id);
+        Task<UserDto> GetSingleUser(int id);
 
-        Task CreateUser(User user);
+        Task CreateUser(UserDto userDto);
         
-        Task UpdateUser(User user);
+        Task UpdateUser(UserDto userDto);
 
         Task DeleteUser(int id);
-
-        Task CreatePasswordHash(string password);
     }
 }

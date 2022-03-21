@@ -15,19 +15,18 @@ namespace BlazorFullStackCrud.Client.Services.UserService
             _navigationManager = navigationManager;
         }
 
-        public ByteArrayPair ByteArrayPair { get; set; }
-        public List<User> Users { get; set; } = new List<User>();
+        public List<UserDto> Users { get; set; } = new List<UserDto>();
         public List<Role> Roles { get; set; } = new List<Role>();
 
-        public async Task CreateUser(User user)
+        public async Task CreateUser(UserDto userDto)
         {
-            var result = await _http.PostAsJsonAsync("api/user", user);
+            var result = await _http.PostAsJsonAsync("api/user", userDto);
             await SetUsers(result);
         }
 
         private async Task SetUsers(HttpResponseMessage result)
         {
-            var response = await result.Content.ReadFromJsonAsync<List<User>>();
+            var response = await result.Content.ReadFromJsonAsync<List<UserDto>>();
             Users = response;
             _navigationManager.NavigateTo("users");
         }
@@ -45,9 +44,9 @@ namespace BlazorFullStackCrud.Client.Services.UserService
                 Roles = result;
         }
 
-        public async Task<User> GetSingleUser(int id)
+        public async Task<UserDto> GetSingleUser(int id)
         {
-            var result = await _http.GetFromJsonAsync<User>($"api/user/{id}");
+            var result = await _http.GetFromJsonAsync<UserDto>($"api/user/{id}");
             if (result != null)
                 return result;
             throw new Exception("User not found!");
@@ -55,21 +54,15 @@ namespace BlazorFullStackCrud.Client.Services.UserService
 
         public async Task GetUsers()
         {
-            var result = await _http.GetFromJsonAsync<List<User>>("api/user");
+            var result = await _http.GetFromJsonAsync<List<UserDto>>("api/user");
             if (result != null)
                 Users = result;
         }
 
-        public async Task UpdateUser(User user)
+        public async Task UpdateUser(UserDto userDto)
         {
-            var result = await _http.PutAsJsonAsync($"api/user/{user.Id}", user);
+            var result = await _http.PutAsJsonAsync($"api/user/{userDto.Id}", userDto);
             await SetUsers(result);
-        }
-
-        public async Task CreatePasswordHash(string password)
-        {
-            var result = await _http.GetFromJsonAsync<ByteArrayPair>("api/auth/hash");
-            ByteArrayPair = new ByteArrayPair(result.PasswordHash, result.PasswordSalt);
         }
     }
 }

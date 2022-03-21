@@ -1,6 +1,7 @@
 ﻿using BlazorFullStackCrud.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 
 namespace BlazorFullStackCrud.Server.Controllers
 {
@@ -18,7 +19,7 @@ namespace BlazorFullStackCrud.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<User>>> GetUsers()
         {
-            var users = await _context.Users.Include(sh => sh.Role).ToListAsync();
+            var users = await _context.Users.ToListAsync();
             return Ok(users);
         }
 
@@ -30,22 +31,41 @@ namespace BlazorFullStackCrud.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetSingleUser(int id)
+        public async Task<ActionResult<UserDto>> GetSingleUser(int id)
         {
+            UserDto userDto = new UserDto();
+
             var user = await _context.Users
-                .Include(h => h.Role)
                 .FirstOrDefaultAsync(h => h.Id == id);
             if (user == null)
             {
                 return NotFound("This user does not exist!");
             }
-            return Ok(user);
+
+            userDto.Id = user.Id;
+            userDto.Username = user.Username;
+            userDto.Email = user.Email;
+            userDto.RoleId = user.RoleId;
+            userDto.DateOfBirth = user.DateOfBirth;
+
+            return Ok(userDto);
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<User>>> CreateUser(User user)
+        public async Task<ActionResult<List<User>>> CreateUser(UserDto userDto)
         {
-            user.Role = null;
+            User user = new User();
+
+            user.Email = userDto.Email;
+            user.Username = userDto.Username;
+           
+            CreatePasswordHash(userDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            
+            user.RoleId = userDto.RoleId;
+            user.DateOfBirth = userDto.DateOfBirth;
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -53,24 +73,25 @@ namespace BlazorFullStackCrud.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<List<User>>> UpdateUser(User user, int id)
+        public async Task<ActionResult<List<User>>> UpdateUser(UserDto userDto, int id)
         {
             var dbUser = await _context.Users
-                .Include(sh => sh.Role)
                 .FirstOrDefaultAsync(sh => sh.Id == id);
             if (dbUser == null)
                 return NotFound("This user does not exist!");
 
-            dbUser.Email = user.Email;
+            dbUser.Email = userDto.Email;
 
-            dbUser.Username = user.Username;
+            dbUser.Username = userDto.Username;
 
-            dbUser.PasswordHash = user.PasswordHash;
-            dbUser.PasswordSalt = user.PasswordSalt;
+            CreatePasswordHash(userDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            dbUser.RoleId = user.RoleId;
+            dbUser.PasswordHash = passwordHash;
+            dbUser.PasswordSalt = passwordSalt;
 
-            dbUser.DateOfBirth = user.DateOfBirth;
+            dbUser.RoleId = userDto.RoleId;
+
+            dbUser.DateOfBirth = userDto.DateOfBirth;
 
             await _context.SaveChangesAsync();
 
@@ -81,7 +102,6 @@ namespace BlazorFullStackCrud.Server.Controllers
         public async Task<ActionResult<List<User>>> DeleteUser(int id)
         {
             var dbUser = await _context.Users
-                .Include(sh => sh.Role)
                 .FirstOrDefaultAsync(sh => sh.Id == id);
             if (dbUser == null)
                 return NotFound("This user does not exist!");
@@ -94,7 +114,17 @@ namespace BlazorFullStackCrud.Server.Controllers
 
         private async Task<List<User>> GetDbUsers()
         {
-            return await _context.Users.Include(sh => sh.Role).ToListAsync();
+            return await _context.Users.ToListAsync();
         }
+
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac = new HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+
     }
 }

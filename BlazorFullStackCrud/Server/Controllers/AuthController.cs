@@ -13,7 +13,7 @@ namespace BlazorFullStackCrud.Server.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        public static User user = new User { Role = new Role() };
+        public static User user = new User();
 
         private readonly IConfiguration _configuration;
 
@@ -23,8 +23,7 @@ namespace BlazorFullStackCrud.Server.Controllers
         }
 
         [HttpPost("register")]
-
-        public async Task<ActionResult<User>> Register(UserRegister request)
+        public async Task<ActionResult<User>> Register(UserDto request)
         {
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
@@ -88,15 +87,6 @@ namespace BlazorFullStackCrud.Server.Controllers
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
-        }
-
-        [HttpGet("/hash")]
-        public ByteArrayPair CreatePasswordHash(string password)
-        {
-            var hmac = new HMACSHA512();
-
-            ByteArrayPair ByteArrayPair = new ByteArrayPair(hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)), hmac.Key);
-            return ByteArrayPair;
         }
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
